@@ -5,7 +5,8 @@ import SearchBox from "./components/search-box/search-box.components";
 
 export default function App() {
   const [monster, setMonster] = useState([]);
-  const [searchField, setsearchField] = useState("");
+  const [searchField, setSearchField] = useState("");
+  const [filterMonster, setFilterMonster] = useState(monster);
 
   const getMonster = () => {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -17,13 +18,16 @@ export default function App() {
     getMonster();
   }, []);
 
-  const filteredData = monster.filter((monster) => {
-    return monster.name.toLocaleLowerCase().includes(searchField);
-  });
+  useEffect(() => {
+    const newFilterData = monster.filter((monster) => {
+      return monster.name.toLocaleLowerCase().includes(searchField);
+    });
+    setFilterMonster(newFilterData);
+  }, [monster, searchField]);
 
   const onSearchChange = (event) => {
     const searchField = event.target.value.toLocaleLowerCase();
-    setsearchField(searchField);
+    setSearchField(searchField);
   };
   return (
     <div className="App">
@@ -33,8 +37,8 @@ export default function App() {
         className="monster-serach-box"
         placeholder="search monster..."
       />
-      {filteredData.length > 0 ? (
-        <CardList filteredData={filteredData} />
+      {filterMonster.length > 0 ? (
+        <CardList filteredData={filterMonster} />
       ) : (
         <p className="white-text">No data found</p>
       )}
